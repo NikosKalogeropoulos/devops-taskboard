@@ -62,4 +62,6 @@ npm run build
 
 The existing unit test checks a constant response shape; live HTTP health and authenticated API checks were also performed during setup. Compose serves a production frontend build through nginx, so rebuild after code edits. `npm run dev` requires separate host database connectivity and backend environment configuration; use Compose for the verified local workflow.
 
-The parent workspace is an existing Git repository with no commits or remote. GitHub authentication and a remote have not been configured; provide the intended repository URL before connecting it.
+## Development status
+
+DevOps TaskBoard is currently in active development.
