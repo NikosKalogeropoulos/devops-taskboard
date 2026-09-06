@@ -1,0 +1,9 @@
+CREATE EXTENSION IF NOT EXISTS pgcrypto;
+CREATE TABLE IF NOT EXISTS users (id uuid PRIMARY KEY DEFAULT gen_random_uuid(), name varchar(100) NOT NULL, email varchar(255) UNIQUE NOT NULL, password_hash text NOT NULL, created_at timestamptz NOT NULL DEFAULT now());
+CREATE TABLE IF NOT EXISTS projects (id uuid PRIMARY KEY DEFAULT gen_random_uuid(), owner_id uuid NOT NULL REFERENCES users(id) ON DELETE CASCADE, name varchar(120) NOT NULL, description text NOT NULL DEFAULT '', created_at timestamptz NOT NULL DEFAULT now());
+CREATE TABLE IF NOT EXISTS tasks (id uuid PRIMARY KEY DEFAULT gen_random_uuid(), project_id uuid NOT NULL REFERENCES projects(id) ON DELETE CASCADE, title varchar(200) NOT NULL, description text NOT NULL DEFAULT '', status varchar(20) NOT NULL DEFAULT 'todo' CHECK (status IN ('todo','in_progress','done')), priority varchar(20) NOT NULL DEFAULT 'medium' CHECK (priority IN ('low','medium','high')), due_date date, created_at timestamptz NOT NULL DEFAULT now(), updated_at timestamptz NOT NULL DEFAULT now());
+CREATE INDEX IF NOT EXISTS idx_projects_owner ON projects(owner_id);
+CREATE INDEX IF NOT EXISTS idx_tasks_project ON tasks(project_id);
+INSERT INTO users (id,name,email,password_hash) VALUES ('11111111-1111-1111-1111-111111111111','Demo User','demo@example.com','$2b$10$qG7f63iCYDj89JLWS4Thce4lbH5fioUVmhHo5E9PQHw.WpPgwMYsO') ON CONFLICT (email) DO NOTHING;
+INSERT INTO projects (id,owner_id,name,description) VALUES ('22222222-2222-2222-2222-222222222222','11111111-1111-1111-1111-111111111111','Launch TaskBoard','Prepare the app for its first production deployment') ON CONFLICT (id) DO NOTHING;
+INSERT INTO tasks (project_id,title,status,priority) VALUES ('22222222-2222-2222-2222-222222222222','Containerize services','done','high'),('22222222-2222-2222-2222-222222222222','Create CI pipeline','in_progress','high'),('22222222-2222-2222-2222-222222222222','Add monitoring','todo','medium') ON CONFLICT DO NOTHING;
